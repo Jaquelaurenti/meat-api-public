@@ -10,7 +10,7 @@ class UsersRouter extends Router{
                 return next()
             })            
         })
-
+        
         application.get('/users/:id', (req, resp, next)=>{
             User.findById(req.params.id).then(user=>{
                 if(user){
@@ -22,7 +22,6 @@ class UsersRouter extends Router{
             })
         })
     }
-
 }
 
 export const usersRouter = new UsersRouter()    
