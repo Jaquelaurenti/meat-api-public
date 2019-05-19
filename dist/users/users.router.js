@@ -20,6 +20,36 @@ class UsersRouter extends router_1.Router {
                 return next();
             });
         });
+        application.post('/users', (req, resp, next) => {
+            let user = new users_model_1.User(req.body);
+            user.save().then(user => {
+                user.password = undefined;
+                resp.json(user);
+            });
+        });
+        application.put('/users/:id', (req, resp, next) => {
+            const options = { overwrite: true };
+            users_model_1.User.update({ _id: req.params.id }, req.body, options)
+                .exec().then(result => {
+                if (result.n) {
+                    return users_model_1.User.findById(req.params.id);
+                }
+                else {
+                    resp.send(404);
+                }
+            }).then(user => {
+                resp.json(user);
+                return next();
+            });
+        });
     }
 }
 exports.usersRouter = new UsersRouter();
+/*
+get > url do recurso > se existir parametro, manda por parâmetro na url
+/users/:id pegando um item individual
+
+post > mudança de algo no servidor > já aceita um conteúdo no corpo, é permitido fazer modificações no servidor
+
+
+*/ 

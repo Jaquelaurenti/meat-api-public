@@ -19,6 +19,7 @@ class Server {
                     version: '1.0.0'
                 });
                 this.application.use(restify.plugins.queryParser());
+                this.application.use(restify.plugins.bodyParser());
                 // rotas
                 routers.forEach(element => {
                     element.applyRoutes(this.application);
