@@ -3,16 +3,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
 // Apenas para controle estático
 const userSchema = new mongoose.Schema({
-    name: {
-        type: String
+    nome: {
+        type: String,
+        required: true,
+        maxlength: 80,
+        minlength: 3
     },
     email: {
         type: String,
-        unique: true
+        unique: true,
+        required: true,
+        match: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     },
-    password: {
+    senha: {
         type: String,
-        select: false // indica ao mongoose que não pode trazer esse campo como padrão
+        select: false,
+        required: true
+    },
+    sexo: {
+        type: String,
+        required: false,
+        enum: ['Masculino', 'Feminino']
     }
 });
 exports.User = mongoose.model('User', userSchema);
