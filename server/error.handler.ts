@@ -28,8 +28,6 @@ export const handleError = (req: restify.Request, resp: restify.Response, err, d
         
         break
     }
-
-
     done()
 
 }
