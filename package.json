@@ -12,7 +12,8 @@
   "dependencies": {
     "mongoose": "4.13.9",
     "restify": "6.3.4",
-    "restify-errors": "5.0.0"
+    "restify-errors": "5.0.0",
+    "typescript": "^3.5.1"
   },
   "devDependencies": {
     "@types/mongoose": "^4.7.32",
