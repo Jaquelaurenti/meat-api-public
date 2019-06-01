@@ -10,8 +10,6 @@ server.bootstrap([users_router_1.usersRouter]).then(server => {
     console.error(error);
     process.exit(1); // indicando que é uma saída normal
 });
-
-//Paulo
 /* Explicações
 //* sempre  que alguem digitar no browse a url http://localhost:3000/hello que for digita no browser a url será chamada
 precisa ser instanciada no server.get('/urlqueserachamada', (req, resp, next)...)

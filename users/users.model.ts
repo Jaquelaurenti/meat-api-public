@@ -1,9 +1,12 @@
 import * as mongoose from 'mongoose'
+import { validaCPF } from '../common/validators';
+import * as bcrypt from 'bcrypt'
+import { environment } from '../common/environment';
 
 export interface User extends mongoose.Document{
-    name: string, 
+    nome: string, 
     email: string, 
-    password: string
+    senha: string
 }
 // Apenas para controle estático
 
@@ -30,8 +33,50 @@ const userSchema = new mongoose.Schema({
         required: false,
         enum: ['Masculino', 'Feminino']
 
+    },
+    cpf:{
+        type: String, 
+        required: false,
+        validate:{
+            validator:validaCPF,
+            message: '{PATH}: CPF inválido({VALUE})'
+        }
     }
 })
+/* registrando as middleware do schema
+A função que está sendo passada no pré não pode ser utilizada arrow function, pois dessa forma, o mongoose nao conseguiria atribuir valor ao this, pois o arrow function 
+impediria o this de ser capturado, pois a funçao do arrow function serve para impedir certos problemas tipo bindevents.*/
+
+
+const hashSenha = (obj, next)=>{
+    bcrypt.hash(obj.senha, environment.security.saltRounds)
+            .then(hash=>{
+              obj.senha = hash
+              next()
+            }).catch(next)
+}
+
+const saveMiddleware = function (next){
+    const user: User = this
+    if(!user.isModified('senha')){
+        next()
+      }
+      else{
+          hashSenha(user, next)
+      }
+}
+
+const updateMiddeware = function (next){
+    if(!this.getUpdate().senha){
+        next()
+      }else{
+        hashSenha(this.getUpdate(), next)
+      }
+}
+
+userSchema.pre('save', saveMiddleware)
+userSchema.pre('findOneAndUpdate', updateMiddeware)
+userSchema.pre('update', updateMiddeware)
 
 export const User = mongoose.model<User>('User', userSchema)
 
