@@ -2,8 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const server_1 = require("./server/server");
 const users_router_1 = require("./users/users.router");
+const restaurants_routers_1 = require("./restaurants/restaurants.routers");
 const server = new server_1.Server();
-server.bootstrap([users_router_1.usersRouter]).then(server => {
+server.bootstrap([
+    users_router_1.usersRouter,
+    restaurants_routers_1.restaurantsRouter
+]).then(server => {
     console.log('o servidor está usando o enderenço:', server.application.address());
 }).catch(error => {
     console.log('Server deu problema');

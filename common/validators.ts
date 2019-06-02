@@ -34,3 +34,18 @@ export const validaCPF = (cpf: string): boolean => {
     return true
 }
 
+export const getMoney = (valor: string): number =>{
+  return parseInt( valor.replace(/[\D]+/g,'') )
+}
+
+export const formatReal = (valor: number): string =>{
+    var tmp = valor +'';
+    tmp = tmp.replace(/([0-9]{2})$/g, ",$1");
+    if( tmp.length > 6 )
+            tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");
+    return tmp
+}
+
+export const formatDinheiro = (valor: number): string =>{
+  return "R$ " + valor.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, "$1.")
+}

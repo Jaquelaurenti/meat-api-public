@@ -1,8 +1,12 @@
 import {Server} from './server/server'
 import {usersRouter} from './users/users.router'
+import {restaurantsRouter} from './restaurants/restaurants.routers'
 
 const server = new Server()
-server.bootstrap([usersRouter]).then(server=> {
+server.bootstrap([
+    usersRouter,
+    restaurantsRouter
+]).then(server=> {
     console.log('o servidor está usando o enderenço:', server.application.address())
 }).catch(error=>{
     console.log('Server deu problema')
