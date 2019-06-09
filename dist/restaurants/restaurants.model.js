@@ -23,4 +23,4 @@ const restSchema = new mongoose.Schema({
         default: []
     }
 });
-exports.Restaurant = mongoose.model('Restaurante', restSchema);
+exports.Restaurant = mongoose.model('Restaurant', restSchema);

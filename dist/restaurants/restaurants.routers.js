@@ -10,18 +10,18 @@ class RestaurantsRouter extends model_router_1.ModelRouter {
             restaurants_model_1.Restaurant.findById(req.params.id, "+menu")
                 .then(rest => {
                 if (!rest) {
-                    throw new restify_errors_1.NotFoundError('Restaurant not found');
+                    throw new restify_errors_1.NotFoundError('Restaurante não encontrado');
                 }
                 else {
                     resp.json(rest.menu);
                     return next();
                 }
-            }).catch(next);
+            });
         };
         this.replaceMenu = (req, resp, next) => {
             restaurants_model_1.Restaurant.findById(req.params.id).then(rest => {
                 if (!rest) {
-                    throw new restify_errors_1.NotFoundError('Restaurant not found');
+                    throw new restify_errors_1.NotFoundError('Menu não encontrado');
                 }
                 else {
                     rest.menu = req.body; //ARRAY de MenuItem

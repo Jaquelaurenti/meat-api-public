@@ -36,4 +36,4 @@ const restSchema = new mongoose.Schema({
 })
 
 
-export const Restaurant = mongoose.model<Restaurant>('Restaurante', restSchema)
+export const Restaurant = mongoose.model<Restaurant>('Restaurant', restSchema)
