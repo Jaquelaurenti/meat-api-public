@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
+const validators_1 = require("../common/validators");
 const menuSchema = new mongoose.Schema({
     nome: {
         type: String,
@@ -8,7 +9,11 @@ const menuSchema = new mongoose.Schema({
     },
     valor: {
         type: Number,
-        required: true
+        required: true,
+        validate: {
+            validator: validators_1.formatReal,
+            message: '{PATH}: Valor inválido({VALUE})'
+        }
     }
 });
 const restSchema = new mongoose.Schema({

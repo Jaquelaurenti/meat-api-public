@@ -10,6 +10,10 @@ export interface User extends mongoose.Document{
 }
 // Apenas para controle estático
 
+export interface UserModel extends mongoose.Model<User>{
+    findByEmail(email: string): Promise<User>
+}
+
 const userSchema = new mongoose.Schema({
     nome:{
         type: String,
@@ -47,6 +51,9 @@ const userSchema = new mongoose.Schema({
 A função que está sendo passada no pré não pode ser utilizada arrow function, pois dessa forma, o mongoose nao conseguiria atribuir valor ao this, pois o arrow function 
 impediria o this de ser capturado, pois a funçao do arrow function serve para impedir certos problemas tipo bindevents.*/
 
+userSchema.statics.findByEmail = function(email: string){
+    return this.findOne({email}) //{email: email}
+}
 
 const hashSenha = (obj, next)=>{
     bcrypt.hash(obj.senha, environment.security.saltRounds)
@@ -66,7 +73,7 @@ const saveMiddleware = function (next){
       }
 }
 
-const updateMiddeware = function (next){
+const updateMiddleware = function (next){
     if(!this.getUpdate().senha){
         next()
       }else{
@@ -75,10 +82,10 @@ const updateMiddeware = function (next){
 }
 
 userSchema.pre('save', saveMiddleware)
-userSchema.pre('findOneAndUpdate', updateMiddeware)
-userSchema.pre('update', updateMiddeware)
+userSchema.pre('findOneAndUpdate', updateMiddleware)
+userSchema.pre('update', updateMiddleware)
 
-export const User = mongoose.model<User>('User', userSchema)
+export const User = mongoose.model<User, UserModel>('User', userSchema)
 
 
 /*

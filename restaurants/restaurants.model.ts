@@ -18,7 +18,11 @@ const menuSchema = new mongoose.Schema({
   },
   valor: {
     type: Number,
-    required: true
+    required: true,
+    validate: {
+      validator: formatReal,
+      message: '{PATH}: Valor inválido({VALUE})'
+    }
   }
 })
 

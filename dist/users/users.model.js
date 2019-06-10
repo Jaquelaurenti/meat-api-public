@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const validators_1 = require("../common/validators");
 const bcrypt = require("bcrypt");
 const environment_1 = require("../common/environment");
-// Apenas para controle estático
 const userSchema = new mongoose.Schema({
     nome: {
         type: String,
@@ -40,6 +39,9 @@ const userSchema = new mongoose.Schema({
 /* registrando as middleware do schema
 A função que está sendo passada no pré não pode ser utilizada arrow function, pois dessa forma, o mongoose nao conseguiria atribuir valor ao this, pois o arrow function
 impediria o this de ser capturado, pois a funçao do arrow function serve para impedir certos problemas tipo bindevents.*/
+userSchema.statics.findByEmail = function (email) {
+    return this.findOne({ email }); //{email: email}
+};
 const hashSenha = (obj, next) => {
     bcrypt.hash(obj.senha, environment_1.environment.security.saltRounds)
         .then(hash => {
@@ -56,7 +58,7 @@ const saveMiddleware = function (next) {
         hashSenha(user, next);
     }
 };
-const updateMiddeware = function (next) {
+const updateMiddleware = function (next) {
     if (!this.getUpdate().senha) {
         next();
     }
@@ -65,8 +67,8 @@ const updateMiddeware = function (next) {
     }
 };
 userSchema.pre('save', saveMiddleware);
-userSchema.pre('findOneAndUpdate', updateMiddeware);
-userSchema.pre('update', updateMiddeware);
+userSchema.pre('findOneAndUpdate', updateMiddleware);
+userSchema.pre('update', updateMiddleware);
 exports.User = mongoose.model('User', userSchema);
 /*
 O mongoose ele tem uns objetos que precisaremos usar, ou seja o Schema, o mongo não obrigada seguir um Schema.
