@@ -6,12 +6,15 @@ import { environment } from '../common/environment';
 export interface User extends mongoose.Document{
     nome: string, 
     email: string, 
-    senha: string
+    senha: string,
+    cpf: string, 
+    sexo: string, 
+    matches(senha: string): boolean
 }
 // Apenas para controle estático
 
 export interface UserModel extends mongoose.Model<User>{
-    findByEmail(email: string): Promise<User>
+    findByEmail(email: string, projection?: string): Promise<User>
 }
 
 const userSchema = new mongoose.Schema({
@@ -51,8 +54,12 @@ const userSchema = new mongoose.Schema({
 A função que está sendo passada no pré não pode ser utilizada arrow function, pois dessa forma, o mongoose nao conseguiria atribuir valor ao this, pois o arrow function 
 impediria o this de ser capturado, pois a funçao do arrow function serve para impedir certos problemas tipo bindevents.*/
 
-userSchema.statics.findByEmail = function(email: string){
-    return this.findOne({email}) //{email: email}
+userSchema.statics.findByEmail = function(email: string, projection: string){
+    return this.findOne({email}), projection //{email: email}
+}
+
+userSchema.methods.matches = function(senha: string): boolean{
+    return bcrypt.compareSync(senha, this.senha)
 }
 
 const hashSenha = (obj, next)=>{

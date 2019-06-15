@@ -2,6 +2,7 @@ import {ModelRouter} from '../common/model-router'
 import * as restify from 'restify'
 import {User} from './users.model'
 import { Model } from 'mongoose';
+import { authenticate } from '../security/auth.handler';
 
 
 class UsersRouter extends ModelRouter<User> {
@@ -14,19 +15,15 @@ class UsersRouter extends ModelRouter<User> {
       //delete document.password
     })
   }
-  findByEmail = (req,resp,next)=>{
+  findByEmail = (req, resp, next)=>{
     if(req.query.email){
       User.findByEmail(req.query.email)
-      .then(user => {
-        if(user){
-          return [user]
-        }else{
-          return []
-        }
-
-      })
-      .then(this.renderAll(resp,next))
-      .catch(next)
+		  .then(user => user ? [user] : [])
+          .then(this.renderAll(resp, next, {
+                pageSize: this.pageSize,
+                url: req.url
+              }))
+          .catch(next)
     }else{
       next()
     }
@@ -42,6 +39,8 @@ class UsersRouter extends ModelRouter<User> {
     application.put(`${this.basePath}/:id`, [this.validateId,this.replace])
     application.patch(`${this.basePath}/:id`, this.update)
     application.del(`${this.basePath}/:id`, this.delete)
+
+    application.post(`${this.basePath}/authenticate`, authenticate)
 
   }
 }

@@ -23,6 +23,7 @@ export const handleError = (req: restify.Request, resp: restify.Response, err, d
             message.push({message: err.errors[name].message})
         }
         err.toJSON = ()=>({
+            message: 'Houve erros de validação enquanto processava o Request',
             errors: message
         })
         
