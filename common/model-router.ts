@@ -1,6 +1,6 @@
 import {Router} from './router'
 import * as mongoose from 'mongoose'
-import {NotFoundError} from 'restify-errors'
+import {NotFoundError, ForbiddenError} from 'restify-errors'
 
 
 export abstract class ModelRouter<D extends mongoose.Document> extends Router {
@@ -50,6 +50,19 @@ export abstract class ModelRouter<D extends mongoose.Document> extends Router {
       next()
     }
   }
+
+  validateChanges = (req, res, next) => {
+    if (!req.authenticated.profiles.some(profile => profile === 'admin')) {
+        //Aplica uma validação para garantir que apenas o perfil 'admin' possa atualizar outros usuários.
+        if (req.params.id === req.authenticated.id) {
+            return next();
+        }
+        else {
+            next(new ForbiddenError('Acesso Negado!'));
+        }
+    }
+    next();
+}
 
   findAll = (req, resp, next)=>{
     let page = parseInt(req.query._page || 1)

@@ -9,7 +9,9 @@ export interface User extends mongoose.Document{
     senha: string,
     cpf: string, 
     sexo: string, 
-    matches(senha: string): boolean
+    perfil: string[],
+    matches(senha: string): boolean,
+    hasAny(...perfil: string[]): boolean // olha todos os perfil e verifica se um desses perfil está dentro dos perfis. Ex: hasAny(['admin', 'user']) ...(suporte)
 }
 // Apenas para controle estático
 
@@ -48,6 +50,10 @@ const userSchema = new mongoose.Schema({
             validator:validaCPF,
             message: '{PATH}: CPF inválido({VALUE})'
         }
+    },
+    perfil:{
+        type: [String],
+        required: false
     }
 })
 /* registrando as middleware do schema
@@ -62,6 +68,9 @@ userSchema.methods.matches = function(senha: string): boolean{
     return bcrypt.compareSync(senha, this.senha)
 }
 
+userSchema.methods.hasAny = function(...perfis: string []): boolean {
+    return perfis.some(perfis => this.perfil.indexOf(perfis) !== -1)
+}
 const hashSenha = (obj, next)=>{
     bcrypt.hash(obj.senha, environment.security.saltRounds)
             .then(hash=>{
