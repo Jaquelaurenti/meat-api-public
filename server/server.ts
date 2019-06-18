@@ -5,6 +5,8 @@ import {Router} from '../common/router'
 import {mergePatchBodyParser} from './merge-patch.parser'
 import { handleError } from './error.handler';
 import {tokenParser} from '../security/token.parser'
+import * as fs from 'fs'
+import {logger} from '../common/logger'
 
 export class Server {
 
@@ -21,17 +23,29 @@ export class Server {
     return new Promise((resolve, reject)=>{
       try{
 
-        this.application = restify.createServer({
+        const options: restify.ServerOptions ={
           name: 'meat-api',
-          version: '1.0.0'
-        })
+          version: '1.0.0',
+          log: logger  //criará um logger à partir do logger (que será um logger filho), sempre que for feita uma referencia ele irá acrescentar ao Log. << importante para filtros >>
+        }
+
+        if(environment.security.enableHTTPS){
+          options.certificate = fs.readFileSync(environment.security.certificate),
+          options.key = fs.readFileSync(environment.security.key)
+        }
+
+        this.application = restify.createServer(options)
+
+        this.application.pre(restify.plugins.requestLogger({
+          log: logger  //prepara o logger
+        }))
 
         this.application.use(restify.plugins.queryParser())
         this.application.use(restify.plugins.bodyParser())
         this.application.use(mergePatchBodyParser)
         this.application.use(tokenParser) // disponivel em todo request que contenha o Token
 
-        //routes
+        //routers
         for (let router of routers) {
           router.applyRoutes(this.application)
         }

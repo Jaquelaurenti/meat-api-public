@@ -47,7 +47,7 @@ class UsersRouter extends ModelRouter<User> {
     this.validateId,
     this.replace])
     application.patch(`${this.basePath}/:id`, 
-    [authorize('admin'),
+    [authorize('admin', 'user'),
     this.validateChanges,
     this.validateId,
     this.update])
